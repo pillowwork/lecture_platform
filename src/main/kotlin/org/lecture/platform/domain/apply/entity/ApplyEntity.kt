@@ -3,6 +3,7 @@ package org.lecture.platform.domain.apply.entity
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.lecture.platform.domain.apply.dto.ApplyDto
+import org.lecture.platform.domain.apply.dto.ApplyRequestDto
 import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.springframework.data.annotation.CreatedDate
 import java.time.LocalDateTime
@@ -31,13 +32,23 @@ class ApplyEntity (
 
 ) {
 
+  companion object {
+
+    fun makeEntity(request: ApplyRequestDto, lecture: LectureEntity): ApplyEntity {
+      return ApplyEntity(
+        employeeId = request.employeeId,
+        lecture = lecture
+      )
+    }
+
+  }
+
   fun toDto(): ApplyDto {
     return ApplyDto(
       id = this.id,
       employeeId = this.employeeId,
+      lecture = this.lecture.toDto(),
       createTime = this.createTime,
-      lectureId = this.lecture.id,
     )
   }
-
 }

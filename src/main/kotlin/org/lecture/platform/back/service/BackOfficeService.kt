@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BackOfficeService(
@@ -29,12 +30,12 @@ class BackOfficeService(
     return PageImpl(dtoList.content, pageable, entityPage.totalElements)
   }
 
+  @Transactional
   fun registerLecture(request: LectureRegisterDto): LectureDto {
-    val room = roomRepository.findByIdOrNull(request.roomId)
-      ?: throw Exception(ErrorEnum.ROOM_NO_INFO.message)
-
-    return lectureRepository.save( LectureEntity.makeEntity(request, room) )
-      .toDto()
+    return roomRepository.findByIdOrNull(request.roomId)?.let {
+      lectureRepository.save( LectureEntity.makeEntity(request, it) )
+        .toDto()
+    } ?: throw Exception(ErrorEnum.ROOM_NO_INFO.message)
   }
 
   fun memberListLecture(lectureId: Long, pageable: Pageable): Page<ApplyDto> {
@@ -44,6 +45,5 @@ class BackOfficeService(
     }
     return PageImpl(dtoList.content, pageable, entityPage.totalElements)
   }
-
 
 }
