@@ -1,5 +1,6 @@
 package org.lecture.platform.back.service
 
+import org.lecture.platform.constants.ErrorEnum
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
 import org.lecture.platform.domain.lecture.entity.LectureEntity
@@ -17,7 +18,7 @@ class BackOfficeService(
 
   fun registerLecture(request: LectureRegisterDto): LectureDto {
     val room = roomRepository.findByIdOrNull(request.roomId)
-      ?: throw Exception("강연장(ROOM) 정보 없음.")
+      ?: throw Exception(ErrorEnum.ROOM_NO_INFO.message)
 
     return lectureRepository.save( LectureEntity.makeEntity(request, room) )
       .toDto()

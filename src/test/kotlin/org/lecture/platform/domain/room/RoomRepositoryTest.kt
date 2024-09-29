@@ -6,14 +6,15 @@ import org.junit.jupiter.api.Test
 import org.lecture.platform.domain.room.entity.RoomEntity
 import org.lecture.platform.domain.room.repository.RoomRepository
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @SpringBootTest
 class RoomRepositoryTest {
 
-  @MockBean
   private lateinit var roomRepository: RoomRepository
 
   @BeforeEach

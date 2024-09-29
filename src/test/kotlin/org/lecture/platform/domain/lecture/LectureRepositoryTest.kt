@@ -7,15 +7,16 @@ import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.lecture.platform.domain.lecture.reposiroty.LectureRepository
 import org.lecture.platform.domain.room.entity.RoomEntity
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @SpringBootTest
 class LectureRepositoryTest {
 
-  @MockBean
   private lateinit var lectureRepository: LectureRepository
   private lateinit var room: RoomEntity
   private lateinit var now: LocalDateTime

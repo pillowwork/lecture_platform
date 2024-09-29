@@ -8,7 +8,6 @@ import org.lecture.platform.domain.apply.repository.ApplyRepository
 import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.lecture.platform.domain.room.entity.RoomEntity
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -19,7 +18,6 @@ import kotlin.test.assertTrue
 @SpringBootTest
 class ApplyRepositoryTest {
 
-  @MockBean
   private lateinit var applyRepository: ApplyRepository
   private lateinit var room: RoomEntity
   private lateinit var now: LocalDateTime
