@@ -49,7 +49,7 @@ class ApplyRepositoryTest {
     val entity = ApplyEntity(
       id = 1,
       employeeId = "12345",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     every { applyRepository.save(entity) } returns entity
 
@@ -60,7 +60,7 @@ class ApplyRepositoryTest {
     assertNotNull(savedEntity)
     assertEquals(savedEntity.id ,1)
     assertEquals(savedEntity.employeeId ,"12345")
-    assertEquals(savedEntity.lectureId ,1)
+    assertEquals(savedEntity.lecture.id ,1)
   }
 
   @Test
@@ -69,7 +69,7 @@ class ApplyRepositoryTest {
     val entity = ApplyEntity(
       id = 1,
       employeeId = "12345",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     every { applyRepository.findByIdOrNull(entity.id) } returns entity
 
@@ -80,7 +80,7 @@ class ApplyRepositoryTest {
     assertNotNull(savedEntity)
     assertEquals(savedEntity.id ,1)
     assertEquals(savedEntity.employeeId ,"12345")
-    assertEquals(savedEntity.lectureId ,1)
+    assertEquals(savedEntity.lecture.id ,1)
   }
 
   @Test
@@ -89,22 +89,22 @@ class ApplyRepositoryTest {
     val entity = ApplyEntity(
       id = 1,
       employeeId = "12345",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     every { applyRepository.save(entity) } returns entity
 
     // when
     entity.employeeId = "56458"
-    entity.lectureId = 2
+    entity.lecture.id = 2
     val savedEntity = applyRepository.save(entity)
 
     // then
     assertNotNull(savedEntity)
     assertEquals(savedEntity.id ,1)
     assertNotEquals(savedEntity.employeeId ,"12345")
-    assertNotEquals(savedEntity.lectureId ,1)
+    assertNotEquals(savedEntity.lecture.id ,1)
     assertEquals(savedEntity.employeeId ,"56458")
-    assertEquals(savedEntity.lectureId ,2)
+    assertEquals(savedEntity.lecture.id ,2)
   }
 
   @Test
@@ -113,7 +113,7 @@ class ApplyRepositoryTest {
     val entity = ApplyEntity(
       id = 1,
       employeeId = "12345",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     every { applyRepository.delete(entity) } just runs
 
@@ -130,17 +130,17 @@ class ApplyRepositoryTest {
     val entity1 = ApplyEntity(
       id = 1,
       employeeId = "12345",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     val entity2 = ApplyEntity(
       id = 2,
       employeeId = "67890",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     val entity3= ApplyEntity(
       id = 3,
       employeeId = "95175",
-      lectureId = lecture.id,
+      lecture = lecture,
     )
     val list = arrayListOf(entity1, entity2, entity3)
     every { applyRepository.findAll() } returns list

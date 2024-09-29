@@ -7,6 +7,7 @@ import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.lecture.platform.domain.lecture.reposiroty.LectureRepository
 import org.lecture.platform.domain.room.entity.RoomEntity
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -143,7 +144,7 @@ class LectureRepositoryTest {
     val entity2 = LectureEntity(
       id = 2,
       speaker = "김미경",
-      title = "인생면언",
+      title = "인생명언",
       description = "오늘 하루 괜찮았나요",
       startTime = now.plusHours(2),
       endTime = now.plusHours(4),
@@ -172,4 +173,5 @@ class LectureRepositoryTest {
     assertTrue(savedList.contains(entity2))
     assertTrue(savedList.contains(entity3))
   }
+
 }
