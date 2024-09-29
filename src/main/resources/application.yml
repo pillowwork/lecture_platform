@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: LECTURE_PLATFORM
+  profiles:
+    active: dev
+#  mvc:
+#    static-path-pattern: /static/**
+#  web:
+#    resources:
+#      static-locations: classpath:/static/
+  datasource:
+    url: jdbc:mariadb://localhost:3306/lecture_platform
+    username: lec_plt
+    password: seminar@!
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      # ddl-auto: create
+      # ddl-auto: validate
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
