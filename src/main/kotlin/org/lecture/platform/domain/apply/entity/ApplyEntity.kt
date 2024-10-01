@@ -22,10 +22,12 @@ class ApplyEntity (
   @Column(name="employee_id",nullable = false)
   var employeeId: String,
 
+  @Comment("생성 시간")
   @CreatedDate
   @Column(name = "create_time", nullable = false)
   var createTime: LocalDateTime = LocalDateTime.now(),
 
+  @Comment("강연 정보")
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "lecture_id", nullable = false)
   var lecture: LectureEntity,

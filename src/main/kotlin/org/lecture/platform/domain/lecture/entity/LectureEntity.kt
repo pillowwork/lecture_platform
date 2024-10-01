@@ -52,7 +52,7 @@ class LectureEntity (
   var createTime: LocalDateTime = LocalDateTime.now(),
 
   @LastModifiedDate
-  @Comment("변경 시간")
+  @Comment("수정 시간")
   @Column(name = "update_time")
   var updateTime: LocalDateTime? = null,
 
