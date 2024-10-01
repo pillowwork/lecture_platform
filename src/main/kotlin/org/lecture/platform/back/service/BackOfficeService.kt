@@ -33,8 +33,14 @@ class BackOfficeService(
   @Transactional
   fun registerLecture(request: LectureRegisterDto): LectureDto {
     return roomRepository.findByIdOrNull(request.roomId)?.let {
-      lectureRepository.save( LectureEntity.makeEntity(request, it) )
-        .toDto()
+      // 강연 등록 시, 강연장에 동 시간 강연이 있는지 확인
+      val lectureList = lectureRepository.findLectureByRoomIdAndTimeRange(it.id, request.startTime, request.endTime)
+      if(lectureList.isEmpty()) {
+        lectureRepository.save( LectureEntity.makeEntity(request, it) )
+          .toDto()
+      } else {
+        throw Exception(ErrorEnum.LECTURE_TIME_OVERLAP.message)
+      }
     } ?: throw Exception(ErrorEnum.ROOM_NO_INFO.message)
   }
 

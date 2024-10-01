@@ -127,7 +127,9 @@ class BackOfficeServiceTest {
       roomId = room.id,
     )
     var entity = LectureEntity.makeEntity(request, room)
+    var lectureList = emptyList<LectureEntity>()
     every { roomRepository.findByIdOrNull(room.id) } returns room
+    every { lectureRepository.findLectureByRoomIdAndTimeRange(room.id, request.startTime, request.endTime) } returns lectureList
     every { lectureRepository.save(any()) } returns entity
 
     // when
@@ -135,6 +137,7 @@ class BackOfficeServiceTest {
 
     // then
     verify { roomRepository.findByIdOrNull(room.id) }
+    verify { lectureRepository.findLectureByRoomIdAndTimeRange(room.id, request.startTime, request.endTime) }
     verify { lectureRepository.save(any()) }
 
     assertNotNull(savedDto)
@@ -144,7 +147,7 @@ class BackOfficeServiceTest {
   }
 
   @Test
-  fun registerLectureTest_fail_no_room_info() {
+  fun registerLectureTest_fail_ROOM_NO_INFO() {
     // set
     var request = LectureRegisterDto(
       speaker = "김창옥",
@@ -165,6 +168,34 @@ class BackOfficeServiceTest {
     verify { roomRepository.findByIdOrNull(request.roomId) }
 
     assertEquals(exception.message, ErrorEnum.ROOM_NO_INFO.message)
+  }
+
+  @Test
+  fun registerLectureTest_fail_LECTURE_TIME_OVERLAP() {
+    // set
+    var request = LectureRegisterDto(
+      speaker = "김창옥",
+      title = "포프리쇼",
+      description = "행복한 순간을 기억해주세요",
+      startTime = now,
+      endTime = now.plusHours(2),
+      roomId = room.id,
+    )
+    var entity = LectureEntity.makeEntity(request, room)
+    var lectureList = arrayListOf(entity)
+    every { roomRepository.findByIdOrNull(room.id) } returns room
+    every { lectureRepository.findLectureByRoomIdAndTimeRange(room.id, request.startTime, request.endTime) } returns lectureList
+    every { lectureRepository.save(any()) } returns entity
+
+    // when
+    var exception = assertThrows<Exception> {
+      backOfficeService.registerLecture(request)
+    }
+
+    // then
+    verify { roomRepository.findByIdOrNull(request.roomId) }
+
+    assertEquals(exception.message, ErrorEnum.LECTURE_TIME_OVERLAP.message)
   }
 
   @Test
