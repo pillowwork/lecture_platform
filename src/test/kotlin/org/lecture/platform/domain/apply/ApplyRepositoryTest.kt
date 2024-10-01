@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.lecture.platform.domain.apply.entity.ApplyEntity
 import org.lecture.platform.domain.apply.repository.ApplyRepository
 import org.lecture.platform.domain.lecture.entity.LectureEntity
-import org.lecture.platform.domain.room.entity.RoomEntity
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
@@ -19,27 +18,22 @@ import kotlin.test.assertTrue
 class ApplyRepositoryTest {
 
   private lateinit var applyRepository: ApplyRepository
-  private lateinit var room: RoomEntity
   private lateinit var now: LocalDateTime
   private lateinit var lecture: LectureEntity
 
   @BeforeEach
   fun setUp() {
     applyRepository = mockk<ApplyRepository>()
-    room = RoomEntity(
-      id = 1,
-      name = "강의실 A",
-      capacity = 200
-    )
     now = LocalDateTime.now()
     lecture = LectureEntity(
       id = 1,
       speaker = "김창옥",
+      roomName = "강연장1",
+      capacity = 10,
       title = "포프리쇼",
       description = "행복한 순간을 기억해주세요",
       startTime = now,
       endTime = now.plusHours(2),
-      room = room
     )
   }
 

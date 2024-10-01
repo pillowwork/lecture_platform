@@ -7,7 +7,6 @@ import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
 import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.lecture.platform.domain.lecture.reposiroty.LectureRepository
-import org.lecture.platform.domain.room.repository.RoomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 class BackOfficeService(
   private val applyRepository: ApplyRepository,
   private val lectureRepository: LectureRepository,
-  private val roomRepository: RoomRepository,
 ) {
 
   fun listLecture(pageable: Pageable): Page<LectureDto> {
@@ -32,16 +30,14 @@ class BackOfficeService(
 
   @Transactional
   fun registerLecture(request: LectureRegisterDto): LectureDto {
-    return roomRepository.findByIdOrNull(request.roomId)?.let {
-      // 강연 등록 시, 강연장에 동 시간 강연이 있는지 확인
-      val lectureList = lectureRepository.findLectureByRoomIdAndTimeRange(it.id, request.startTime, request.endTime)
-      if(lectureList.isEmpty()) {
-        lectureRepository.save( LectureEntity.makeEntity(request, it) )
-          .toDto()
-      } else {
-        throw Exception(ErrorEnum.LECTURE_TIME_OVERLAP.name)
-      }
-    } ?: throw Exception(ErrorEnum.ROOM_NO_INFO.name)
+    // 강연 등록 시, 강연장에 동 시간 강연이 있는지 확인
+    val lectureList = lectureRepository.findLectureByRoomNameAndTimeRange(request.roomName, request.startTime, request.endTime)
+    if(lectureList.isEmpty()) {
+      return lectureRepository.save( LectureEntity.makeEntity(request) )
+        .toDto()
+    } else {
+      throw Exception(ErrorEnum.LECTURE_TIME_OVERLAP.name)
+    }
   }
 
   fun memberListLecture(lectureId: Long, pageable: Pageable): Page<ApplyDto> {

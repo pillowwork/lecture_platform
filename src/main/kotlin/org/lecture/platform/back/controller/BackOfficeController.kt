@@ -2,9 +2,7 @@ package org.lecture.platform.back.controller
 
 import org.lecture.platform.back.service.BackOfficeService
 import org.lecture.platform.constants.PageableConstants
-import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
-import org.lecture.platform.response.ApplicationErrorResponse
 import org.lecture.platform.response.ApplicationResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort

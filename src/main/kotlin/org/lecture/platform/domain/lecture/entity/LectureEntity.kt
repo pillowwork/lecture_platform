@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
-import org.lecture.platform.domain.room.entity.RoomEntity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
@@ -22,6 +21,14 @@ class LectureEntity (
   @Comment("강연자")
   @Column(nullable = false)
   var speaker: String,
+
+  @Comment("강연장")
+  @Column(nullable = false)
+  var roomName: String,
+
+  @Comment("신청 인원")
+  @Column(nullable = false)
+  var capacity: Int,
 
   @Comment("강연 제목")
   @Column(nullable = false)
@@ -49,23 +56,19 @@ class LectureEntity (
   @Column(name = "update_time")
   var updateTime: LocalDateTime? = null,
 
-  @Comment("강연장 정보")
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "room_id", nullable = false)
-  var room: RoomEntity,
-
   ) {
 
   companion object {
 
-    fun makeEntity(request: LectureRegisterDto, room: RoomEntity): LectureEntity {
+    fun makeEntity(request: LectureRegisterDto): LectureEntity {
       return LectureEntity(
         speaker = request.speaker,
+        roomName = request.roomName,
+        capacity = request.capacity,
         title = request.title,
         description = request.description,
         startTime = request.startTime,
         endTime = request.endTime,
-        room = room,
       )
 
     }
@@ -76,13 +79,14 @@ class LectureEntity (
     return LectureDto(
       id = this.id,
       speaker = this.speaker,
+      roomName = this.roomName,
+      capacity = this.capacity,
       title = this.title,
       description = this.description,
       startTime = this.startTime,
       endTime = this.endTime,
       createTime = this.createTime,
       updateTime = this.updateTime,
-      roomId = this.room.id,
     )
   }
 

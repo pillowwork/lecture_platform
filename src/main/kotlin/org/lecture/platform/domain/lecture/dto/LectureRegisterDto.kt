@@ -5,12 +5,13 @@ import java.time.LocalDateTime
 
 class LectureRegisterDto(
   var speaker: String,
+  var roomName: String,
+  var capacity: Int,
   var title: String,
   var description: String,
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   var startTime: LocalDateTime,
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   var endTime: LocalDateTime,
-  var roomId: Long,
 ) {
 }

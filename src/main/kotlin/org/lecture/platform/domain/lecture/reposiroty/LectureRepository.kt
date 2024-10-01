@@ -15,7 +15,7 @@ interface LectureRepository : JpaRepository<LectureEntity, Long> {
 
   @Query(
     value = """
-      SELECT id, speaker, title, description, start_time, end_time, create_time, update_time, room_id
+      SELECT id, speaker, room_name, capacity, title, description, start_time, end_time, create_time, update_time
       FROM lecture
       WHERE start_time <= DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
       AND start_time >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
@@ -25,9 +25,9 @@ interface LectureRepository : JpaRepository<LectureEntity, Long> {
 
   @Query(
     value = """
-      SELECT id, speaker, title, description, start_time, end_time, create_time, update_time, room_id
+      SELECT id, speaker, room_name, capacity, title, description, start_time, end_time, create_time, update_time
       FROM lecture
-      WHERE room_id = :roomId
+      WHERE room_name = :roomName
         AND
         (
           (start_time <= :startTime AND :startTime < end_time)
@@ -36,15 +36,15 @@ interface LectureRepository : JpaRepository<LectureEntity, Long> {
         )
     """, nativeQuery = true
   )
-  fun findLectureByRoomIdAndTimeRange(
-    @Param("roomId") roomId: Long ,
+  fun findLectureByRoomNameAndTimeRange(
+    @Param("roomName") roomName: String ,
     @Param("startTime") startTime: LocalDateTime,
     @Param("endTime") endTime: LocalDateTime
   ): List<LectureEntity>
 
   @Query(
     value = """
-      SELECT A.id, A.speaker, A.title, A.description, A.start_time, A.end_time, A.create_time, A.update_time, A.room_id
+      SELECT A.id, A.speaker, A.room_name, A.capacity, A.title, A.description, A.start_time, A.end_time, A.create_time, A.update_time
       FROM lecture A,
         (
           SELECT B.lecture_id, COUNT(B.employee_id) AS apply_cnt
