@@ -40,6 +40,8 @@ class FrontService(
         throw Exception(ErrorEnum.APPLY_ALREADY_APPLIED.name)
       }
     } ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.name)
+    
+    // TODO 강의장 별 capacity 적용
   }
 
   fun applyListLecture(employeeId: String, pageable: Pageable): Page<ApplyDto> {
@@ -49,10 +51,13 @@ class FrontService(
       }
   }
 
+  @Transactional
   fun applyCancelLecture(applyId: Long) {
     applyRepository.findByIdOrNull(applyId)?.let {
       applyRepository.delete(it)
-    }
+    } ?: throw Exception(ErrorEnum.APPLY_NO_INFO.name)
+
+    return
   }
 
   fun popularLecture(pageable: Pageable) {

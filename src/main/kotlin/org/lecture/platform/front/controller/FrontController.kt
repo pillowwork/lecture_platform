@@ -1,13 +1,9 @@
 package org.lecture.platform.front.controller
 
 import org.lecture.platform.constants.PageableConstants
-import org.lecture.platform.domain.apply.dto.ApplyDto
 import org.lecture.platform.domain.apply.dto.ApplyRequestDto
-import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.front.service.FrontService
-import org.lecture.platform.response.ApplicationErrorResponse
 import org.lecture.platform.response.ApplicationResponse
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -64,9 +60,9 @@ class FrontController(
   @DeleteMapping("/apply/{applyId}/cancel")
   fun applyCancelLecture(
     @PathVariable applyId: Long,
-  ): ResponseEntity<Any> {
+  ): ResponseEntity<ApplicationResponse> {
     frontService.applyCancelLecture(applyId)
-    return ResponseEntity(HttpStatus.OK)
+    return ApplicationResponse.makeResponseEntity(HttpStatus.OK)
   }
 
   /** 5. 실시간 인기 강연 */

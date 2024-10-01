@@ -232,7 +232,7 @@ class FrontServiceTest {
   }
 
   @Test
-  fun applyCancelLectureTest() {
+  fun applyCancelLectureTest_success() {
     val entity = ApplyEntity(
       id = 1,
       employeeId = "ABCDE",
@@ -249,6 +249,21 @@ class FrontServiceTest {
     // then
     verify { applyRepository.findByIdOrNull(1) }
     verify { applyRepository.delete(entity) }
+  }
+
+  @Test
+  fun applyCancelLectureTest_fail_APPLY_NO_INFO() {
+    every { applyRepository.findByIdOrNull(1) } returns null
+
+    // when
+    val exception = assertThrows<Exception> {
+      frontService.applyCancelLecture(1)
+    }
+
+    // then
+    verify { applyRepository.findByIdOrNull(1) }
+
+    assertEquals(exception.message, ErrorEnum.APPLY_NO_INFO.name)
   }
 
 }

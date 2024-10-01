@@ -28,6 +28,15 @@ class ApplicationResponse(
         httpStatus)
     }
 
+    fun makeResponseEntity( httpStatus: HttpStatus): ResponseEntity<ApplicationResponse> {
+      return ResponseEntity(
+        this.makeResponse(
+          noneData(),
+          ApplicationErrorResponse.noneError()
+        ),
+        httpStatus)
+    }
+
     fun noneData() = null
 
   }
