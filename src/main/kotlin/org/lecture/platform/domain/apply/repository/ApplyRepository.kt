@@ -13,4 +13,6 @@ interface ApplyRepository: JpaRepository<ApplyEntity, Long> {
 
   fun findByEmployeeId(employeeId: String, pageable: Pageable): Page<ApplyEntity>
 
+  fun findByLectureIdAndEmployeeId(lectureId: Long, employeeId: String): List<ApplyEntity>
+
 }

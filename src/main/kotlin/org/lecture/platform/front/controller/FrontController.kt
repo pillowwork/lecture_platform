@@ -5,6 +5,8 @@ import org.lecture.platform.domain.apply.dto.ApplyDto
 import org.lecture.platform.domain.apply.dto.ApplyRequestDto
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.front.service.FrontService
+import org.lecture.platform.response.ApplicationErrorResponse
+import org.lecture.platform.response.ApplicationResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -27,16 +29,20 @@ class FrontController(
       sort = [PageableConstants.DEFAULT_SORT],
       direction = Sort.Direction.DESC
     ) pageable: Pageable
-  ): ResponseEntity<Page<LectureDto>> {
-    return ResponseEntity(frontService.listLecture(pageable), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ApplicationResponse.makeResponseEntity(
+      frontService.listLecture(pageable),
+      HttpStatus.OK)
   }
 
   /** 2. 강연 신청 (사업 입력, 같은 강연 중복 신청 제한) */
   @PostMapping("/apply")
   fun applyLecture(
     @RequestBody request: ApplyRequestDto
-  ): ResponseEntity<ApplyDto> {
-    return ResponseEntity(frontService.applyLecture(request), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ApplicationResponse.makeResponseEntity(
+      frontService.applyLecture(request),
+      HttpStatus.OK)
   }
 
   /** 3. 신청 내역 조회 (사번 입력) */
@@ -48,8 +54,10 @@ class FrontController(
       sort = [PageableConstants.DEFAULT_SORT],
       direction = Sort.Direction.DESC
     ) pageable: Pageable
-  ): ResponseEntity<Page<ApplyDto>> {
-    return ResponseEntity(frontService.applyListLecture(employeeId, pageable), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ApplicationResponse.makeResponseEntity(
+      frontService.applyListLecture(employeeId, pageable),
+      HttpStatus.OK)
   }
 
   /** 4. 신청한 강연 취소 */

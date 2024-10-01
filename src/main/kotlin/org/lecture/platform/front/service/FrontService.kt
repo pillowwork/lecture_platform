@@ -7,12 +7,12 @@ import org.lecture.platform.domain.apply.entity.ApplyEntity
 import org.lecture.platform.domain.apply.repository.ApplyRepository
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.reposiroty.LectureRepository
-import org.lecture.platform.domain.room.repository.RoomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FrontService(
@@ -28,17 +28,19 @@ class FrontService(
     return PageImpl(dtoList.content, pageable, entityPage.totalElements)
   }
 
+  @Transactional
   fun applyLecture(request: ApplyRequestDto): ApplyDto {
     return lectureRepository.findByIdOrNull(request.lectureId)?.let {
-      applyRepository.save(ApplyEntity.makeEntity(request, it))
-        .toDto()
-    } ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.message)
-
-    // TODO 이미 신청 체크 (중복 체크)
+      // 강연 신청 시, 강연에 이미 신청한 사업이 있는지 확인
+      val applyList = applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId)
+      if(applyList.isEmpty()){
+        applyRepository.save(ApplyEntity.makeEntity(request, it))
+          .toDto()
+      } else {
+        throw Exception(ErrorEnum.APPLY_ALREADY_APPLIED.name)
+      }
+    } ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.name)
   }
-
-
-
 
   fun applyListLecture(employeeId: String, pageable: Pageable): Page<ApplyDto> {
     return applyRepository.findByEmployeeId(employeeId, pageable)

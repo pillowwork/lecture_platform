@@ -7,4 +7,6 @@ enum class ErrorEnum(val code: Int, val message: String) {
 
   ROOM_NO_INFO(2001, "강연장(ROOM) 정보 없음."),
 
+  APPLY_ALREADY_APPLIED(3001, "강연(LECTURE)에 이미 신청(APPLY) 정보가 있음."),
+
 }
