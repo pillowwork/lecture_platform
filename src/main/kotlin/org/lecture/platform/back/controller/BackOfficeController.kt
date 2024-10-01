@@ -2,12 +2,10 @@ package org.lecture.platform.back.controller
 
 import org.lecture.platform.back.service.BackOfficeService
 import org.lecture.platform.constants.PageableConstants
-import org.lecture.platform.domain.apply.dto.ApplyDto
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
 import org.lecture.platform.response.ApplicationErrorResponse
 import org.lecture.platform.response.ApplicationResponse
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
@@ -30,11 +28,8 @@ class BackOfficeController(
       direction = Sort.Direction.DESC
     ) pageable: Pageable
   ): ResponseEntity<ApplicationResponse> {
-    return ResponseEntity(
-      ApplicationResponse.makeResponse(
-        backOfficeService.listLecture(pageable),
-        ApplicationErrorResponse.noneError()
-      ),
+    return ApplicationResponse.makeResponseEntity(
+      backOfficeService.listLecture(pageable),
       HttpStatus.OK)
   }
 
@@ -42,8 +37,10 @@ class BackOfficeController(
   @PostMapping("/register")
   fun registerLecture(
     @RequestBody request: LectureRegisterDto
-  ): ResponseEntity<LectureDto> {
-    return ResponseEntity(backOfficeService.registerLecture(request), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ApplicationResponse.makeResponseEntity(
+      backOfficeService.registerLecture(request),
+      HttpStatus.OK)
   }
 
   /** 3. 강연 신청자 목록 (강연 별 신청한 사번 목록) */
@@ -56,11 +53,8 @@ class BackOfficeController(
       direction = Sort.Direction.DESC
     ) pageable: Pageable
   ): ResponseEntity<ApplicationResponse> {
-    return ResponseEntity(
-      ApplicationResponse.makeResponse(
-        backOfficeService.memberListLecture(lectureId, pageable),
-        ApplicationErrorResponse.noneError()
-      ),
+    return ApplicationResponse.makeResponseEntity(
+      backOfficeService.memberListLecture(lectureId, pageable),
       HttpStatus.OK)
   }
 

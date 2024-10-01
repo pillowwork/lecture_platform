@@ -1,5 +1,7 @@
 package org.lecture.platform.response
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import java.time.LocalDateTime
 
 class ApplicationResponse(
@@ -15,6 +17,15 @@ class ApplicationResponse(
         data = data,
         error = error
       )
+    }
+
+    fun makeResponseEntity(data: Any?, httpStatus: HttpStatus): ResponseEntity<ApplicationResponse> {
+      return ResponseEntity(
+        this.makeResponse(
+          data,
+          ApplicationErrorResponse.noneError()
+        ),
+        httpStatus)
     }
 
     fun noneData() = null
