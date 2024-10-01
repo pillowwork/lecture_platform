@@ -25,17 +25,19 @@
 
 
 ## 설명
-* DB 초기호를 위해 jpa.hibernate.ddl-auto: create 설정
+* DB 초기화를 위해 jpa.hibernate.ddl-auto: create 설정
 * API mapping은 '/api'로 시작
 * BackOffice 기능과 Front 기능 구분은 위해, '/api' 뒤에 BackOffice 기능은 '/back', Front 기능은 '/front' 추가
-* 기능 실게 사용 염두하여 pageable 적용
+* 기능 실제 사용 염두하여 pageable 적용
   * BackOffice - 강연 목록 API
   * BackOffice - 강연 신청자 목록
   * Front - 강연 목록
   * Front - 신청 내역 조회
   * Front - 실시간 인기 강연
-
-
+* ApplicationRunner 통해 강연과 강연 신청 테스트 데이터 초기 입력
+  * Front 강연 신청 API - 첫 번째 강연 기준, 신청 인원 마감에 대한 테스트 바로 진행 가능
+  * BackOffice 강연 목록 API - 목록 조회 시, 테스트 데이터 바로 조회 가능
+  * BackOffice 강연 신청자 목록 API - 목록 조회 시, 테스트 데이터 바로 조회 가능
 
 ## BACK OFFICE API
 * ### 강연 목록 조회 - [GET] /api/back/list
