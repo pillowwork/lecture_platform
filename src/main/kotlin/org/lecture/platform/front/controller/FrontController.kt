@@ -73,8 +73,10 @@ class FrontController(
       sort = [PageableConstants.DEFAULT_SORT],
       direction = Sort.Direction.DESC
     ) pageable: Pageable
-  ) {
-    frontService.popularLecture(pageable)
+  ): ResponseEntity<ApplicationResponse> {
+    return ApplicationResponse.makeResponseEntity(
+      frontService.popularLecture(pageable),
+      HttpStatus.OK)
   }
 
 }

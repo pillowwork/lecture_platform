@@ -56,12 +56,14 @@ class FrontService(
     applyRepository.findByIdOrNull(applyId)?.let {
       applyRepository.delete(it)
     } ?: throw Exception(ErrorEnum.APPLY_NO_INFO.name)
-
-    return
   }
 
-  fun popularLecture(pageable: Pageable) {
-
+  fun popularLecture(pageable: Pageable): Page<LectureDto> {
+    val entityPage = lectureRepository.findApplyByPopular(pageable)
+    val dtoList = entityPage.map {
+      it.toDto()
+    }
+    return PageImpl(dtoList.content, pageable, entityPage.totalElements)
   }
 
 }

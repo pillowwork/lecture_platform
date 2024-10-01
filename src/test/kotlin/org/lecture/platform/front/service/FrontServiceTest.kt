@@ -8,6 +8,7 @@ import org.lecture.platform.constants.ErrorEnum
 import org.lecture.platform.domain.apply.dto.ApplyRequestDto
 import org.lecture.platform.domain.apply.entity.ApplyEntity
 import org.lecture.platform.domain.apply.repository.ApplyRepository
+import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.entity.LectureEntity
 import org.lecture.platform.domain.lecture.reposiroty.LectureRepository
 import org.lecture.platform.domain.room.entity.RoomEntity
@@ -37,6 +38,10 @@ class FrontServiceTest {
   private lateinit var lecture1: LectureEntity
   private lateinit var lecture2: LectureEntity
   private lateinit var lecture3: LectureEntity
+
+  private lateinit var lectureDto1: LectureDto
+  private lateinit var lectureDto2: LectureDto
+  private lateinit var lectureDto3: LectureDto
 
   @BeforeEach
   fun setUp() {
@@ -78,17 +83,17 @@ class FrontServiceTest {
       endTime = now.plusHours(6),
       room = room
     )
+    lectureDto1 = lecture1.toDto()
+    lectureDto2 = lecture2.toDto()
+    lectureDto3 = lecture3.toDto()
   }
 
   @Test
   fun listLectureTest() {
     val pageable: Pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "id"))
 
-    val list = arrayListOf(lecture1, lecture2, lecture3)
+    val list = arrayListOf(lecture3, lecture2, lecture1)
     val page = PageImpl(list, pageable, list.size.toLong())
-
-    val dto2 = lecture2.toDto()
-    val dto3 = lecture3.toDto()
 
     every { lectureRepository.findApplicableLectureList(pageable) } returns page
 
@@ -101,21 +106,21 @@ class FrontServiceTest {
     assertEquals(savedPage.totalPages ,2)
     assertEquals(savedPage.number ,0)
 
-    assertEquals(savedPage.content[0].id, dto3.id)
-    assertEquals(savedPage.content[0].speaker, dto3.speaker)
-    assertEquals(savedPage.content[0].title, dto3.title)
-    assertEquals(savedPage.content[0].description, dto3.description)
-    assertEquals(savedPage.content[0].startTime, dto3.startTime)
-    assertEquals(savedPage.content[0].endTime, dto3.endTime)
-    assertEquals(savedPage.content[0].roomId, dto3.roomId)
+    assertEquals(savedPage.content[0].id, lectureDto3.id)
+    assertEquals(savedPage.content[0].speaker, lectureDto3.speaker)
+    assertEquals(savedPage.content[0].title, lectureDto3.title)
+    assertEquals(savedPage.content[0].description, lectureDto3.description)
+    assertEquals(savedPage.content[0].startTime, lectureDto3.startTime)
+    assertEquals(savedPage.content[0].endTime, lectureDto3.endTime)
+    assertEquals(savedPage.content[0].roomId, lectureDto3.roomId)
 
-    assertEquals(savedPage.content[1].id, dto2.id)
-    assertEquals(savedPage.content[1].speaker, dto2.speaker)
-    assertEquals(savedPage.content[1].title, dto2.title)
-    assertEquals(savedPage.content[1].description, dto2.description)
-    assertEquals(savedPage.content[1].startTime, dto2.startTime)
-    assertEquals(savedPage.content[1].endTime, dto2.endTime)
-    assertEquals(savedPage.content[1].roomId, dto2.roomId)
+    assertEquals(savedPage.content[1].id, lectureDto2.id)
+    assertEquals(savedPage.content[1].speaker, lectureDto2.speaker)
+    assertEquals(savedPage.content[1].title, lectureDto2.title)
+    assertEquals(savedPage.content[1].description, lectureDto2.description)
+    assertEquals(savedPage.content[1].startTime, lectureDto2.startTime)
+    assertEquals(savedPage.content[1].endTime, lectureDto2.endTime)
+    assertEquals(savedPage.content[1].roomId, lectureDto2.roomId)
   }
 
   @Test
@@ -150,8 +155,6 @@ class FrontServiceTest {
       employeeId = "ABCDE",
       lectureId = 1
     )
-    val entity = ApplyEntity.makeEntity(request, lecture1)
-    val list = arrayListOf(entity)
 
     every { lectureRepository.findByIdOrNull(request.lectureId) } returns null
 
@@ -264,6 +267,41 @@ class FrontServiceTest {
     verify { applyRepository.findByIdOrNull(1) }
 
     assertEquals(exception.message, ErrorEnum.APPLY_NO_INFO.name)
+  }
+
+  @Test
+  fun popularLectureTest() {
+    val pageable: Pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "id"))
+
+    val list = arrayListOf(lecture3, lecture2, lecture1)
+    val page = PageImpl(list, pageable, list.size.toLong())
+
+    every { lectureRepository.findApplyByPopular(pageable) } returns page
+
+    // when
+    val savedPage = frontService.popularLecture(pageable)
+
+    // then
+    assertNotNull(savedPage)
+    assertEquals(savedPage.totalElements ,3)
+    assertEquals(savedPage.totalPages ,2)
+    assertEquals(savedPage.number ,0)
+
+    assertEquals(savedPage.content[0].id, lectureDto3.id)
+    assertEquals(savedPage.content[0].speaker, lectureDto3.speaker)
+    assertEquals(savedPage.content[0].title, lectureDto3.title)
+    assertEquals(savedPage.content[0].description, lectureDto3.description)
+    assertEquals(savedPage.content[0].startTime, lectureDto3.startTime)
+    assertEquals(savedPage.content[0].endTime, lectureDto3.endTime)
+    assertEquals(savedPage.content[0].roomId, lectureDto3.roomId)
+
+    assertEquals(savedPage.content[1].id, lectureDto2.id)
+    assertEquals(savedPage.content[1].speaker, lectureDto2.speaker)
+    assertEquals(savedPage.content[1].title, lectureDto2.title)
+    assertEquals(savedPage.content[1].description, lectureDto2.description)
+    assertEquals(savedPage.content[1].startTime, lectureDto2.startTime)
+    assertEquals(savedPage.content[1].endTime, lectureDto2.endTime)
+    assertEquals(savedPage.content[1].roomId, lectureDto2.roomId)
   }
 
 }

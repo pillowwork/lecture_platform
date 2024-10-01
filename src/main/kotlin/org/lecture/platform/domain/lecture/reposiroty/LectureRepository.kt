@@ -42,4 +42,20 @@ interface LectureRepository : JpaRepository<LectureEntity, Long> {
     @Param("endTime") endTime: LocalDateTime
   ): List<LectureEntity>
 
+  @Query(
+    value = """
+      SELECT A.id, A.speaker, A.title, A.description, A.start_time, A.end_time, A.create_time, A.update_time, A.room_id
+      FROM lecture A,
+        (
+          SELECT B.lecture_id, COUNT(B.employee_id) AS apply_cnt
+          FROM apply B
+          WHERE B.create_time >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+          GROUP BY B.lecture_id
+        ) Z
+      WHERE A.id = Z.lecture_id
+      ORDER BY Z.apply_cnt DESC
+    """, nativeQuery = true
+  )
+  fun findApplyByPopular(pageable: Pageable): Page<LectureEntity>
+
 }
