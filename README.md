@@ -26,8 +26,6 @@
 
 ## 설명
 * DB 초기호를 위해 jpa.hibernate.ddl-auto: create 설정
-* 
-
 * API mapping은 '/api'로 시작
 * BackOffice 기능과 Front 기능 구분은 위해, '/api' 뒤에 BackOffice 기능은 '/back', Front 기능은 '/front' 추가
 * 기능 실게 사용 염두하여 pageable 적용
