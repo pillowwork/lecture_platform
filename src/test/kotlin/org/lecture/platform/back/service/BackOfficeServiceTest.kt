@@ -167,7 +167,7 @@ class BackOfficeServiceTest {
     // then
     verify { roomRepository.findByIdOrNull(request.roomId) }
 
-    assertEquals(exception.message, ErrorEnum.ROOM_NO_INFO.message)
+    assertEquals(exception.message, ErrorEnum.ROOM_NO_INFO.name)
   }
 
   @Test
@@ -195,11 +195,11 @@ class BackOfficeServiceTest {
     // then
     verify { roomRepository.findByIdOrNull(request.roomId) }
 
-    assertEquals(exception.message, ErrorEnum.LECTURE_TIME_OVERLAP.message)
+    assertEquals(exception.message, ErrorEnum.LECTURE_TIME_OVERLAP.name)
   }
 
   @Test
-  fun memberListLecture() {
+  fun memberListLecture_success() {
     val pageable: Pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"))
     val lecture = LectureEntity(
       id = 1,
@@ -222,6 +222,7 @@ class BackOfficeServiceTest {
     val dto4 = entity4.toDto()
     val dto5 = entity5.toDto()
 
+    every { lectureRepository.findByIdOrNull(lecture.id) } returns lecture
     every { applyRepository.findByLectureId(lecture.id, pageable) } returns page
 
     // when
@@ -242,4 +243,31 @@ class BackOfficeServiceTest {
     assertEquals(savedPage.content[2].id, dto3.id)
     assertEquals(savedPage.content[2].employeeId, dto3.employeeId)
   }
+
+  @Test
+  fun memberListLecture_fail_LECTURE_NO_INFO() {
+    val pageable: Pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "id"))
+    val lecture = LectureEntity(
+      id = 1,
+      speaker = "김창옥",
+      title = "포프리쇼",
+      description = "행복한 순간을 기억해주세요",
+      startTime = now,
+      endTime = now.plusHours(2),
+      room = room
+    )
+
+    every { lectureRepository.findByIdOrNull(lecture.id) } returns null
+
+    // when
+    var exception = assertThrows<Exception> {
+      backOfficeService.memberListLecture(lecture.id, pageable)
+    }
+
+    // then
+    verify { lectureRepository.findByIdOrNull(lecture.id) }
+
+    assertEquals(exception.message, ErrorEnum.LECTURE_NO_INFO.name)
+  }
+
 }

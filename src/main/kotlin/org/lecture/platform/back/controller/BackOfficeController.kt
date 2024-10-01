@@ -5,6 +5,8 @@ import org.lecture.platform.constants.PageableConstants
 import org.lecture.platform.domain.apply.dto.ApplyDto
 import org.lecture.platform.domain.lecture.dto.LectureDto
 import org.lecture.platform.domain.lecture.dto.LectureRegisterDto
+import org.lecture.platform.response.ApplicationErrorResponse
+import org.lecture.platform.response.ApplicationResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -27,8 +29,13 @@ class BackOfficeController(
       sort = [PageableConstants.DEFAULT_SORT],
       direction = Sort.Direction.DESC
     ) pageable: Pageable
-  ): ResponseEntity<Page<LectureDto>> {
-    return ResponseEntity(backOfficeService.listLecture(pageable), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ResponseEntity(
+      ApplicationResponse.makeResponse(
+        backOfficeService.listLecture(pageable),
+        ApplicationErrorResponse.noneError()
+      ),
+      HttpStatus.OK)
   }
 
   /** 2. 강연 등록 (강연자, 강연장, 신청 인원, 강연 시간, 강연 내용 입력) */
@@ -48,8 +55,13 @@ class BackOfficeController(
       sort = [PageableConstants.DEFAULT_SORT],
       direction = Sort.Direction.DESC
     ) pageable: Pageable
-  ): ResponseEntity<Page<ApplyDto>> {
-    return ResponseEntity(backOfficeService.memberListLecture(lectureId, pageable), HttpStatus.OK)
+  ): ResponseEntity<ApplicationResponse> {
+    return ResponseEntity(
+      ApplicationResponse.makeResponse(
+        backOfficeService.memberListLecture(lectureId, pageable),
+        ApplicationErrorResponse.noneError()
+      ),
+      HttpStatus.OK)
   }
 
 }

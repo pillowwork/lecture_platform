@@ -39,17 +39,19 @@ class BackOfficeService(
         lectureRepository.save( LectureEntity.makeEntity(request, it) )
           .toDto()
       } else {
-        throw Exception(ErrorEnum.LECTURE_TIME_OVERLAP.message)
+        throw Exception(ErrorEnum.LECTURE_TIME_OVERLAP.name)
       }
-    } ?: throw Exception(ErrorEnum.ROOM_NO_INFO.message)
+    } ?: throw Exception(ErrorEnum.ROOM_NO_INFO.name)
   }
 
   fun memberListLecture(lectureId: Long, pageable: Pageable): Page<ApplyDto> {
-    val entityPage = applyRepository.findByLectureId(lectureId, pageable)
-    val dtoList = entityPage.map {
-      it.toDto()
-    }
-    return PageImpl(dtoList.content, pageable, entityPage.totalElements)
+    lectureRepository.findByIdOrNull(lectureId)?.let {
+      val entityPage = applyRepository.findByLectureId(lectureId, pageable)
+      val dtoList = entityPage.map {
+        it.toDto()
+      }
+      return PageImpl(dtoList.content, pageable, entityPage.totalElements)
+    } ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.name)
   }
 
 }

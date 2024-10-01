@@ -1,5 +1,8 @@
 package org.lecture.platform.exception
 
+import org.lecture.platform.constants.ErrorEnum
+import org.lecture.platform.response.ApplicationErrorResponse
+import org.lecture.platform.response.ApplicationResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -14,13 +17,15 @@ class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(Exception::class)
-  fun handleException(ex: Exception): ResponseEntity<Any> {
+  fun handleException(ex: Exception): ResponseEntity<ApplicationResponse> {
     logger.error(ex.message)
-    return ResponseEntity(
-      mapOf(
-        "status" to HttpStatus.BAD_REQUEST,
-        "message" to ex.message,
-      ),
-      HttpStatus.BAD_REQUEST)
+    return ex.message?.let {
+      ResponseEntity(
+        ApplicationResponse.makeResponse(
+          ApplicationResponse.noneData(),
+          ApplicationErrorResponse.fromEnum( ErrorEnum.valueOf(it) )
+        ),
+        HttpStatus.BAD_REQUEST)
+    } ?: ResponseEntity(HttpStatus.BAD_REQUEST)
   }
 }
