@@ -129,6 +129,7 @@ class FrontServiceTest {
     val list = emptyList<ApplyEntity>()
 
     every { lectureRepository.findByIdOrNull(request.lectureId) } returns lecture1
+    every { applyRepository.countByLectureId(lecture1.id) } returns 0
     every { applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId) } returns list
     every { applyRepository.save(any()) } returns entity
 
@@ -166,6 +167,28 @@ class FrontServiceTest {
   }
 
   @Test
+  fun applyLectureTest_fail_LECTURE_CAPACITY_FULL() {
+    val request = ApplyRequestDto(
+      employeeId = "ABCDE",
+      lectureId = 1
+    )
+
+    every { lectureRepository.findByIdOrNull(request.lectureId) } returns lecture1
+    every { applyRepository.countByLectureId(lecture1.id) } returns 10
+
+    // when
+    val exception = assertThrows<Exception> {
+      frontService.applyLecture(request)
+    }
+
+    // then
+    verify { lectureRepository.findByIdOrNull(request.lectureId) }
+    verify { applyRepository.countByLectureId(lecture1.id) }
+
+    assertEquals(exception.message, ErrorEnum.LECTURE_CAPACITY_FULL.name)
+  }
+
+  @Test
   fun applyLectureTest_fail_APPLY_ALREADY_APPLIED() {
     val request = ApplyRequestDto(
       employeeId = "ABCDE",
@@ -175,6 +198,7 @@ class FrontServiceTest {
     val list = arrayListOf(entity)
 
     every { lectureRepository.findByIdOrNull(request.lectureId) } returns lecture1
+    every { applyRepository.countByLectureId(lecture1.id) } returns 0
     every { applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId) } returns list
 
     // when
@@ -184,6 +208,7 @@ class FrontServiceTest {
 
     // then
     verify { lectureRepository.findByIdOrNull(request.lectureId) }
+    verify { applyRepository.countByLectureId(lecture1.id) }
     verify { applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId) }
 
     assertEquals(exception.message, ErrorEnum.APPLY_ALREADY_APPLIED.name)

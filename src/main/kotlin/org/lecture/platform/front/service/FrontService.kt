@@ -30,18 +30,20 @@ class FrontService(
 
   @Transactional
   fun applyLecture(request: ApplyRequestDto): ApplyDto {
-    return lectureRepository.findByIdOrNull(request.lectureId)?.let {
-      // 강연 신청 시, 강연에 이미 신청한 사업이 있는지 확인
-      val applyList = applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId)
-      if(applyList.isEmpty()){
-        applyRepository.save(ApplyEntity.makeEntity(request, it))
-          .toDto()
-      } else {
-        throw Exception(ErrorEnum.APPLY_ALREADY_APPLIED.name)
-      }
-    } ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.name)
-    
-    // TODO 강의장 별 capacity 적용
+    val lecture = lectureRepository.findByIdOrNull(request.lectureId)
+      ?: throw Exception(ErrorEnum.LECTURE_NO_INFO.name)
+
+    if (applyRepository.countByLectureId(lecture.id) >=  lecture.capacity) {
+      throw Exception(ErrorEnum.LECTURE_CAPACITY_FULL.name)
+    }
+
+    val applyList = applyRepository.findByLectureIdAndEmployeeId(request.lectureId, request.employeeId)
+    if(applyList.isNotEmpty()){
+      throw Exception(ErrorEnum.APPLY_ALREADY_APPLIED.name)
+    }
+
+    return applyRepository.save(ApplyEntity.makeEntity(request, lecture))
+      .toDto()
   }
 
   fun applyListLecture(employeeId: String, pageable: Pageable): Page<ApplyDto> {

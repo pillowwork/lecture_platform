@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ApplyRepository: JpaRepository<ApplyEntity, Long> {
 
+  fun countByLectureId(lectureId: Long): Int
+
   fun findByLectureId(lectureId: Long, pageable: Pageable): Page<ApplyEntity>
 
   fun findByEmployeeId(employeeId: String, pageable: Pageable): Page<ApplyEntity>
